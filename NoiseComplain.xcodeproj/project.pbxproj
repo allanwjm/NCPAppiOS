@@ -31,8 +31,6 @@
 		CA1E3F551CA8232900803B44 /* NCPDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA1E3F541CA8232900803B44 /* NCPDetailViewController.m */; };
 		CA36918E1CB75370000264C7 /* NCPProgressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA36918D1CB75370000264C7 /* NCPProgressViewController.m */; };
 		CA4B30E41C0F17050013E70E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = CA4B30E31C0F17050013E70E /* main.mm */; };
-		CA4B30FD1C0F17050013E70E /* NoiseComplainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4B30FC1C0F17050013E70E /* NoiseComplainTests.m */; };
-		CA4B31081C0F17050013E70E /* NoiseComplainUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4B31071C0F17050013E70E /* NoiseComplainUITests.m */; };
 		CA4B31301C0F18900013E70E /* NCPPostViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4B31211C0F18900013E70E /* NCPPostViewController.m */; };
 		CA4B31311C0F18900013E70E /* NCPHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4B31231C0F18900013E70E /* NCPHistoryViewController.m */; };
 		CA4B31331C0F18900013E70E /* NCPLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4B31271C0F18900013E70E /* NCPLocationViewController.m */; };
@@ -67,6 +65,7 @@
 		CAC7E89F1CA5347200802998 /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC7E8981CA5347200802998 /* FMDatabaseQueue.m */; };
 		CAC7E8A01CA5347200802998 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC7E89B1CA5347200802998 /* FMResultSet.m */; };
 		CAC7E8A51CA5396700802998 /* NCPGeneral.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC7E8A41CA5396700802998 /* NCPGeneral.m */; };
+		CAD444D21CBCE808003059E3 /* UI.ai in Resources */ = {isa = PBXBuildFile; fileRef = CAD444D11CBCE808003059E3 /* UI.ai */; };
 		CAF236161CBA3A7A00481EEB /* NCPProgressTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF236151CBA3A7A00481EEB /* NCPProgressTableCell.m */; };
 		CAF7ABE41CA693E3006E860A /* NCPWebService.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF7ABE31CA693E3006E860A /* NCPWebService.m */; };
 /* End PBXBuildFile section */
@@ -132,11 +131,7 @@
 		CA4B30E31C0F17050013E70E /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		CA4B30F31C0F17050013E70E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CA4B30F81C0F17050013E70E /* NoiseComplainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoiseComplainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CA4B30FC1C0F17050013E70E /* NoiseComplainTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NoiseComplainTests.m; sourceTree = "<group>"; };
-		CA4B30FE1C0F17050013E70E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CA4B31031C0F17050013E70E /* NoiseComplainUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoiseComplainUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CA4B31071C0F17050013E70E /* NoiseComplainUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NoiseComplainUITests.m; sourceTree = "<group>"; };
-		CA4B31091C0F17050013E70E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CA4B31201C0F18900013E70E /* NCPPostViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCPPostViewController.h; sourceTree = "<group>"; };
 		CA4B31211C0F18900013E70E /* NCPPostViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCPPostViewController.m; sourceTree = "<group>"; };
 		CA4B31221C0F18900013E70E /* NCPHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCPHistoryViewController.h; sourceTree = "<group>"; };
@@ -193,6 +188,7 @@
 		CAC7E89B1CA5347200802998 /* FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMResultSet.m; path = NoiseComplain/Libarary/FMDB/FMResultSet.m; sourceTree = "<group>"; };
 		CAC7E8A31CA5396700802998 /* NCPGeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCPGeneral.h; sourceTree = "<group>"; };
 		CAC7E8A41CA5396700802998 /* NCPGeneral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCPGeneral.m; sourceTree = "<group>"; };
+		CAD444D11CBCE808003059E3 /* UI.ai */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UI.ai; sourceTree = "<group>"; };
 		CAF236141CBA3A7A00481EEB /* NCPProgressTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCPProgressTableCell.h; sourceTree = "<group>"; };
 		CAF236151CBA3A7A00481EEB /* NCPProgressTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NCPProgressTableCell.m; sourceTree = "<group>"; };
 		CAF7ABE21CA693E3006E860A /* NCPWebService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NCPWebService.h; sourceTree = "<group>"; };
@@ -360,8 +356,6 @@
 			children = (
 				58B126641C2E6B550095014F /* Libarary */,
 				CA4B30E11C0F17050013E70E /* NoiseComplain */,
-				CA4B30FB1C0F17050013E70E /* NoiseComplainTests */,
-				CA4B31061C0F17050013E70E /* NoiseComplainUITests */,
 				CA4B30E01C0F17050013E70E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -395,24 +389,6 @@
 				CA3690B21CA197A40015FF2C /* NCPPrefixHeader.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		CA4B30FB1C0F17050013E70E /* NoiseComplainTests */ = {
-			isa = PBXGroup;
-			children = (
-				CA4B30FC1C0F17050013E70E /* NoiseComplainTests.m */,
-				CA4B30FE1C0F17050013E70E /* Info.plist */,
-			);
-			path = NoiseComplainTests;
-			sourceTree = "<group>";
-		};
-		CA4B31061C0F17050013E70E /* NoiseComplainUITests */ = {
-			isa = PBXGroup;
-			children = (
-				CA4B31071C0F17050013E70E /* NoiseComplainUITests.m */,
-				CA4B31091C0F17050013E70E /* Info.plist */,
-			);
-			path = NoiseComplainUITests;
 			sourceTree = "<group>";
 		};
 		CA4B31151C0F17440013E70E /* Resources */ = {
@@ -468,6 +444,7 @@
 		CA540B921C27ED5300F8E860 /* Documents */ = {
 			isa = PBXGroup;
 			children = (
+				CAD444D11CBCE808003059E3 /* UI.ai */,
 				CA540B991C27EEFA00F8E860 /* Sample.md */,
 				3351DEA7EAC2F286EED2A297 /* TODO.md */,
 			);
@@ -671,6 +648,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAD444D21CBCE808003059E3 /* UI.ai in Resources */,
 				CAC7E88D1CA27BFD00802998 /* mapapi.bundle in Resources */,
 				CA4B31791C0F1A220013E70E /* Main.storyboard in Resources */,
 				CA4B317D1C0F1B2C0013E70E /* SfaType.plist in Resources */,
@@ -745,7 +723,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA4B30FD1C0F17050013E70E /* NoiseComplainTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -753,7 +730,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA4B31081C0F17050013E70E /* NoiseComplainUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
