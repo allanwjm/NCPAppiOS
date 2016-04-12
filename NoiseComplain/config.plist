@@ -21,11 +21,13 @@
 	<key>SQLiteFile</key>
 	<string>ncp.sqlite</string>
 	<key>ServerHost</key>
-	<string>http://222.200.176.92:58080/ncpserver</string>
+	<string>http://localhost:8080</string>
 	<key>ServerErrorMessageKey</key>
 	<string>error</string>
 	<key>ServerComplainPage</key>
 	<string>/api/complain</string>
+	<key>ServerCheckProgressPage</key>
+	<string>/api/check-progress</string>
 	<key>DeviceTypePList</key>
 	<string>DevType</string>
 	<key>MeterVCRefreshPerSecond</key>

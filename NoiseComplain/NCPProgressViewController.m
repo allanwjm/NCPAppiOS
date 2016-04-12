@@ -10,6 +10,7 @@
 #import "NCPComplainForm.h"
 #import "NCPComplainProgress.h"
 #import "NCPProgressTableCell.h"
+#import "NCPSQLite.h"
 
 #pragma mark - 常量定义
 
@@ -26,14 +27,28 @@ static NSString *const kNCPCellIdProgress = @"progressCell";
 @interface NCPProgressViewController ()
 
 // 进度数组
-@property(nonatomic) NSMutableArray *progresses;
+@property(nonatomic) NSArray *progresses;
+// 最新进度
+@property(nonatomic) NCPComplainProgress *latestProgress;
 
 @end
 
 @implementation NCPProgressViewController
 
+#pragma mark - ViewController生命周期
+
+// 视图载入完毕
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    // 从SQLite中载入进度数组
+    self.progresses = [NCPSQLite selectAllComplainProgressForForm:self.form];
+    self.latestProgress = [NCPSQLite selectLatestComplainProgressForForm:self.form];
+}
+
 #pragma mark - 表视图点击事件
 
+// 表视图点击事件
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // 取消选择焦点
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -46,6 +61,16 @@ static NSString *const kNCPCellIdProgress = @"progressCell";
     return 2;
 }
 
+// 节头
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (section == 0) {
+        return @"点击查看更多投诉详情";
+    } else if (section == 1) {
+        return @"受理进度列表";
+    }
+    return [super tableView:tableView titleForFooterInSection:section];
+}
+
 // 每节行数
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
@@ -56,25 +81,13 @@ static NSString *const kNCPCellIdProgress = @"progressCell";
     return 0;
 }
 
-// 获取单元格
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && indexPath.row == 0) {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kNCPCellIdToDetail];
-        cell.textLabel.text = self.form.dateShort;
-        cell.detailTextLabel.text = self.form.address;
-        return cell;
-    } else if (indexPath.section == 1 && indexPath.row == 0) {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kNCPCellIdProgressTitle];
-        return cell;
-    } else if (indexPath.section == 1 && indexPath.row >= 1) {
-        NCPProgressTableCell *cell = [tableView dequeueReusableCellWithIdentifier:kNCPCellIdProgress];
-        // 设置进度单元格内容
-        cell.progress = self.progresses[(NSUInteger) (indexPath.row - 1)];
-        [cell setPosition:[self calPosition:indexPath]];
-        return cell;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 1 && indexPath.row >= 1) {
+        return 54;
     }
-    return nil;
+    return [super tableView:tableView heightForRowAtIndexPath:indexPath];
 }
+
 
 // 计算单元格所处的位置
 - (NCPProgressTableCellPosition)calPosition:(NSIndexPath *)indexPath {
@@ -100,14 +113,37 @@ static NSString *const kNCPCellIdProgress = @"progressCell";
     }
 }
 
-// 节头
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section == 0) {
-        return @"点击查看更多投诉详情";
-    } else if (section == 1) {
-        return @"受理进度列表";
+// 获取单元格
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        // 投诉详情按钮
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kNCPCellIdToDetail];
+        cell.textLabel.text = self.form.dateShort;
+        cell.detailTextLabel.text = self.form.address;
+        return cell;
+    } else if (indexPath.section == 1 && indexPath.row == 0) {
+        // 受理进度标题
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kNCPCellIdProgressTitle];
+        if (self.latestProgress && self.latestProgress.finished.boolValue) {
+            // 受理结束
+            cell.detailTextLabel.text = @"受理完成";
+        } else {
+            cell.detailTextLabel.text = @"受理中...";
+        }
+        return cell;
+    } else if (indexPath.section == 1 && indexPath.row >= 1) {
+        // 受理进度单元格
+        NCPProgressTableCell *cell = [tableView dequeueReusableCellWithIdentifier:kNCPCellIdProgress];
+        // 设置进度单元格内容
+        NCPComplainProgress *progress = self.progresses[(NSUInteger) (indexPath.row - 1)];
+        cell.progress = progress;
+        cell.labelTitle.text = progress.title;
+        cell.labelComment.text = progress.comment;
+        cell.labelDate.text = progress.dateShort;
+        [cell setPosition:[self calPosition:indexPath]];
+        return cell;
     }
-    return [super tableView:tableView titleForFooterInSection:section];
+    return nil;
 }
 
 #pragma mark - Segue跳转

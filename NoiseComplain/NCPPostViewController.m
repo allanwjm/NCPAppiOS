@@ -9,8 +9,9 @@
 #import "NCPPostViewController.h"
 #import "NCPComplainForm.h"
 #import "NCPNoiseRecorder.h"
-#import "NCPSQLiteDAO.h"
+#import "NCPSQLite.h"
 #import "NCPWebService.h"
+#import "NCPComplainProgress.h"
 
 #import "BaiduMapAPI_Location/BMKLocationComponent.h"
 #import "BaiduMapAPI_Search/BMKGeocodeSearch.h"
@@ -121,7 +122,7 @@ static NSString *const kNCPSegueIdToLocation = @"ComplainFormToLocation";
 
     // 弹出确认提示框
     LGAlertView *confirmAlert = [LGAlertView alertViewWithTitle:@"提示"
-                                                        message:@"投诉尚未完成，确定要退出吗？"
+                                                        message:@"投诉尚未完成, 确定要退出吗?"
                                                           style:LGAlertViewStyleAlert
                                                    buttonTitles:nil
                                               cancelButtonTitle:@"取消"
@@ -435,7 +436,7 @@ static NSString *const kNCPSegueIdToLocation = @"ComplainFormToLocation";
     } else {
         // 如果表单不完整, 中断发送
         LGAlertView *checkAlert = [LGAlertView alertViewWithTitle:@"信息不完整"
-                                                          message:@"投诉信息还没有填写完整，可能无法受理！\n是否仍然要提交投诉？"
+                                                          message:@"投诉信息还没有填写完整,可能无法受理!\n是否仍然要提交投诉?"
                                                             style:LGAlertViewStyleAlert
                                                      buttonTitles:nil
                                                 cancelButtonTitle:@"取消"
@@ -467,30 +468,43 @@ static NSString *const kNCPSegueIdToLocation = @"ComplainFormToLocation";
                             success:^(NSDictionary *json) {
                                 // 检查返回的JSON是否包含formId信息
                                 if (!json[@"formId"] || ((NSNumber *) json[@"formId"]).longValue < 0) {
-                                    [self showErrorAlert:sendAlert message:@"服务器返回数据错误！\n错误：未返回有效的投诉表单号"];
+                                    [self showErrorAlert:sendAlert message:@"服务器返回数据错误!\n错误: 未返回有效的投诉表单号"];
                                     return;
                                 }
+
+                                // 检查返回的JSON是否包含有初次受理进度信息
+                                NSDictionary *progressJSON;
+                                if (!json[@"postProgress"]) {
+                                    [self showErrorAlert:sendAlert message:@"服务器返回数据错误!\n错误: 未返回受理进度信息"];
+                                    return;
+                                }
+                                progressJSON = json[@"postProgress"];
 
                                 // 包含formId信息, 投诉请求成功
                                 long formId = ((NSNumber *) json[@"formId"]).longValue;
                                 self.form.formId = @(formId);
 
                                 //将投诉表单保存于本地
-                                [NCPSQLiteDAO insertComplainForm:self.form];
+                                [NCPSQLite insertComplainForm:self.form];
+
+                                // 生成初始提交Progress
+                                NCPComplainProgress *progress = [NCPComplainProgress progressWithJSON:progressJSON];
+                                // 保存初始提交Progress
+                                [NCPSQLite insertComplainProgress:progress];
 
                                 // 请求成功提示
                                 [self showSuccessAlert:sendAlert];
                             }
                             failure:^(NSString *error) {
                                 [self showErrorAlert:sendAlert
-                                             message:[NSString stringWithFormat:@"与服务器通信失败！\n%@", error]];
+                                             message:[NSString stringWithFormat:@"与服务器通信失败!\n%@", error]];
                             }];
 }
 
 // 显示投诉成功提示框
 - (void)showSuccessAlert:(LGAlertView *)lastAlert {
     LGAlertView *successAlert = [LGAlertView alertViewWithTitle:@"投诉成功"
-                                                        message:@"您的投诉已经发送至服务器！\n返回投诉列表可以查看投诉受理进度"
+                                                        message:@"您的投诉已经发送至服务器!\n返回投诉列表可以查看投诉受理进度"
                                                           style:LGAlertViewStyleAlert
                                                    buttonTitles:@[@"返回列表"]
                                               cancelButtonTitle:@"取消"

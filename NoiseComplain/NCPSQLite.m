@@ -6,12 +6,15 @@
 //  Copyright © 2016 sysu. All rights reserved.
 //
 
-#import "NCPSQLiteDAO.h"
+#import "NCPSQLite.h"
 #import "NCPComplainForm.h"
 
 #import "FMDB.h"
+#import "NCPComplainProgress.h"
 
-@implementation NCPSQLiteDAO
+typedef BOOL b;
+
+@implementation NCPSQLite
 
 // 获取(已经开启的)FMDB数据库对象
 + (FMDatabase *)database {
@@ -36,19 +39,18 @@
     return NO;
 }
 
-#pragma mark - ComplainForm增删改查
+#pragma mark - ComplainForm操作
 
 // 插入投诉表单
 + (BOOL)insertComplainForm:(NCPComplainForm *)form {
-
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLiteDAO database];
+    FMDatabase *db = [NCPSQLite database];
     if (!db) {
         return false;
     }
 
     // 检查表是否存在, 若不存在则创建
-    if (![NCPSQLiteDAO database:db containsTable:@"complain_form"]) {
+    if (![NCPSQLite database:db containsTable:@"complain_form"]) {
         // 创建新表
         [db executeUpdate:@"CREATE TABLE complain_form ("
                 "form_id INTEGER PRIMARY KEY,"
@@ -69,8 +71,8 @@
     }
 
     // 插入新投诉表单
-    BOOL result = [db executeUpdate:@"INSERT INTO complain_form "
-                                            "(form_id,"
+    BOOL result = [db executeUpdate:@"INSERT INTO complain_form ("
+                                            "form_id,"
                                             "date,"
                                             "average_intensity,"
                                             "intensities,"
@@ -83,8 +85,8 @@
                                             "manual_longitude,"
                                             "sfa_type,"
                                             "noise_type,"
-                                            "comment) "
-                                            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                            "comment"
+                                            ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                                     form.formId,
                                     form.dateStorage,
                                     @(form.averageIntensity),
@@ -107,19 +109,18 @@
 
 // 查询全部投诉表单
 + (NSArray *)selectAllComplainForm {
-
     // 准备储存结果的Array
     NSMutableArray *array = [NSMutableArray array];
 
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLiteDAO database];
+    FMDatabase *db = [NCPSQLite database];
     if (!db) {
         // 返回空数组
         return array;
     }
 
     // 检查表格是否存在
-    if (![NCPSQLiteDAO database:db containsTable:@"complain_form"]) {
+    if (![NCPSQLite database:db containsTable:@"complain_form"]) {
         // 返回空数组
         return array;
     }
@@ -158,16 +159,130 @@
     return array;
 }
 
+// 删除投诉表单
 + (BOOL)deleteComplainForm:(NCPComplainForm *)form {
-
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLiteDAO database];
+    FMDatabase *db = [NCPSQLite database];
     if (!db) {
         // 返回空数组
         return NO;
     }
 
     BOOL result = [db executeUpdate:@"DELETE FROM complain_form WHERE form_id = ?", form.formId];
+
+    [db close];
+    return result;
+}
+
+#pragma mark - ComplainProgress操作
+
+// 插入处理记录
++ (BOOL)insertComplainProgress:(NCPComplainProgress *)progress {
+    // 获取数据库对象
+    FMDatabase *db = [NCPSQLite database];
+    if (!db) {
+        return false;
+    }
+
+    // 检查表是否存在, 若不存在则创建
+    if (![NCPSQLite database:db containsTable:@"complain_progress"]) {
+        // 创建新表
+        [db executeUpdate:@"CREATE TABLE complain_progress ("
+                "progress_id INTEGER PRIMARY KEY,"
+                "form_id INTEGER,"
+                "date TEXT,"
+                "finished INTEGER,"
+                "title TEXT,"
+                "comment TEXT,"
+                "details TEXT"
+                ")"];
+    }
+
+    // 插入新投诉表单
+    b result = [db executeUpdate:@"INSERT INTO complain_progress ("
+                                         "progress_id,"
+                                         "form_id,"
+                                         "date,"
+                                         "finished,"
+                                         "title,"
+                                         "comment,"
+                                         "details"
+                                         ") VALUES (?,?,?,?,?,?,?)",
+                                 progress.progressId,
+                                 progress.formId,
+                                 progress.dateStorage,
+                                 @(progress.finished.boolValue ? 1 : 0),
+                                 progress.title,
+                                 progress.comment,
+                                 progress.detailsJSON
+    ];
+
+    [db close];
+    return result;
+
+}
+
+// 查询某个表单的所有处理记录
++ (NSArray *)selectAllComplainProgressForForm:(NCPComplainForm *)form {
+    // 准备储存结果的Array
+    NSMutableArray *array = [NSMutableArray array];
+
+    // 获取数据库对象
+    FMDatabase *db = [NCPSQLite database];
+    if (!db) {
+        // 返回空数组
+        return array;
+    }
+
+    // 检查表格是否存在
+    if (![NCPSQLite database:db containsTable:@"complain_progress"]) {
+        // 返回空数组
+        return array;
+    }
+
+    // 获取查询结果
+    FMResultSet *rs = [db executeQuery:@"SELECT * FROM complain_progress WHERE form_id = ?",
+                                       form.formId];
+    while (rs.next) {
+        // 新建ComplainProgress对象并赋值
+        NCPComplainProgress *progress = [[NCPComplainProgress alloc] init];
+
+        progress.progressId = @([rs longForColumn:@"progress_id"]);
+        progress.formId = @([rs longForColumn:@"form_id"]);
+        progress.dateStorage = [rs stringForColumn:@"date"];
+        progress.finished = @([rs intForColumn:@"finished"] != 0);
+        progress.title = [rs stringForColumn:@"title"];
+        progress.comment = [rs stringForColumn:@"comment"];
+        progress.detailsJSON = [rs stringForColumn:@"details"];
+
+        [array addObject:progress];
+    }
+
+    [rs close];
+    [db close];
+    return array;
+}
+
+// 查询某个表单的最新处理记录
++ (NCPComplainProgress *)selectLatestComplainProgressForForm:(NCPComplainForm *)form {
+    NSArray *array = [NCPSQLite selectAllComplainProgressForForm:form];
+    if (array.count > 0) {
+        return array.lastObject;
+    } else {
+        return nil;
+    }
+}
+
+// 删除某个表单的所有处理记录
++ (BOOL)deleteComplainProgressForForm:(NCPComplainForm *)form {
+    // 获取数据库对象
+    FMDatabase *db = [NCPSQLite database];
+    if (!db) {
+        // 返回空数组
+        return NO;
+    }
+
+    BOOL result = [db executeUpdate:@"DELETE FROM complain_progress WHERE form_id = ?", form.formId];
 
     [db close];
     return result;

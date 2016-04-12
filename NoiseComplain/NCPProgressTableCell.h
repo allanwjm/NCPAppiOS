@@ -23,6 +23,11 @@ typedef enum NCPProgressTableCellPosition {
  */
 @interface NCPProgressTableCell : UITableViewCell
 
+// 各Label
+@property(weak, nonatomic) IBOutlet UILabel *labelTitle;
+@property(weak, nonatomic) IBOutlet UILabel *labelComment;
+@property(weak, nonatomic) IBOutlet UILabel *labelDate;
+
 // 进度对象
 @property(nonatomic) NCPComplainProgress *progress;
 

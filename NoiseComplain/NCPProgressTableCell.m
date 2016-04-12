@@ -7,6 +7,7 @@
 //
 
 #import "NCPProgressTableCell.h"
+#import "NCPComplainProgress.h"
 
 @interface NCPProgressTableCell ()
 
@@ -23,17 +24,9 @@
 
 @implementation NCPProgressTableCell
 
-#pragma mark - 单元格生命周期
-
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    // 初始化
-}
-
+// 点击事件
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
-    // 点击事件
 }
 
 #pragma mark - 单元格位置
@@ -61,18 +54,22 @@
         case NCPProgressTableCellPositionTop:
             self.lineTop.hidden = YES;
             self.lineBottom.hidden = NO;
+            self.imageProgress.image = [UIImage imageNamed:@"ProgressUnchecked"];
             break;
         case NCPProgressTableCellPositionMiddle:
             self.lineTop.hidden = NO;
             self.lineBottom.hidden = NO;
+            self.imageProgress.image = [UIImage imageNamed:@"ProgressUnchecked"];
             break;
         case NCPProgressTableCellPositionBottom:
             self.lineTop.hidden = NO;
             self.lineBottom.hidden = YES;
+            self.imageProgress.image = [UIImage imageNamed:@"ProgressProcessing"];
             break;
         case NCPProgressTableCellPositionUnique:
             self.lineTop.hidden = YES;
             self.lineBottom.hidden = YES;
+            self.imageProgress.image = [UIImage imageNamed:@"ProgressProcessing"];
             break;
     }
 }

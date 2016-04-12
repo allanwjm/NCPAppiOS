@@ -12,49 +12,20 @@
 
 @implementation NCPWebService
 
-#pragma mark - 投诉请求
-
-+ (void)sendComplainForm:(NCPComplainForm *)form
-                 success:(void (^)(NSDictionary *))success
-                 failure:(void (^)(NSString *))failure; {
-
-    // 组织参数
-    NSMutableDictionary *paras = [NSMutableDictionary dictionary];
-    [paras setValue:@"iOS" forKey:@"platform"];
-    [paras setValue:form.devId forKey:@"devId"];
-    [paras setValue:form.devType forKey:@"devType"];
-    [paras setValue:form.dateStorage forKey:@"date"];
-
-    [paras setValue:@(form.averageIntensity) forKey:@"averageIntensity"];
-    [paras setValue:form.intensitiesJSON forKey:@"intensities"];
-
-    [paras setValue:form.coord forKey:@"coord"];
-    [paras setValue:form.autoAddress forKey:@"autoAddress"];
-    [paras setValue:form.autoLatitude forKey:@"autoLatitude"];
-    [paras setValue:form.autoLongitude forKey:@"autoLongitude"];
-    [paras setValue:form.autoAltitude forKey:@"autoAltitude"];
-    [paras setValue:form.autoHorizontalAccuracy forKey:@"autoHorizontalAccuracy"];
-    [paras setValue:form.autoVerticalAccuracy forKey:@"autoVerticalAccuracy"];
-
-    [paras setValue:form.manualAddress forKey:@"manualAddress"];
-    [paras setValue:form.manualLatitude forKey:@"manualLatitude"];
-    [paras setValue:form.manualLongitude forKey:@"manualLongitude"];
-
-    [paras setValue:form.sfaTypePost forKey:@"sfaType"];
-    [paras setValue:form.noiseTypePost forKey:@"noiseType"];
-    [paras setValue:form.comment forKey:@"comment"];
-
++ (void)request:(NSString *)page
+          paras:(NSDictionary *)paras
+        success:(void (^)(NSDictionary *))success
+        failure:(void (^)(NSString *))failure; {
     // 发送请求
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    [manager POST:[NCPConfigString(@"ServerHost") stringByAppendingString:NCPConfigString(@"ServerComplainPage")]
+    [manager POST:[NCPConfigString(@"ServerHost") stringByAppendingString:page]
        parameters:paras
          progress:nil
           success:^(NSURLSessionDataTask *task, id resp) {
               NSError *error;
               NSDictionary *json = [NSJSONSerialization JSONObjectWithData:(NSData *) resp options:0 error:&error];
               if (error) {
-                  NSLog(@"JSON Error(success block): %@", [[NSString alloc] initWithData:resp encoding:NSUTF8StringEncoding]);
                   failure(error.localizedDescription);
               } else {
                   // 解析成功, 请求成功
@@ -63,14 +34,12 @@
           }
           failure:^(NSURLSessionDataTask *task, NSError *error) {
               // 请求失败, 返回错误消息
-              NSLog(@"Failure!!!");
               NSData *data = error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey];
               if (data) {
                   NSLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
                   NSError *jError;
                   NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jError];
                   if (jError) {
-                      NSLog(@"JSON Error(failure block): %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
                       failure(jError.localizedDescription);
                   } else {
                       failure(json[NCPConfigString(@"ServerErrorMessageKey")]);
@@ -79,6 +48,60 @@
                   failure(error.localizedDescription);
               }
           }];
+}
+
+// 向服务器发送投诉表单
++ (void)sendComplainForm:(NCPComplainForm *)form
+                 success:(void (^)(NSDictionary *))success
+                 failure:(void (^)(NSString *))failure; {
+
+    // 组织参数
+    NSMutableDictionary *paras = [NSMutableDictionary dictionary];
+    paras[@"platform"] = @"iOS";
+    paras[@"devId"] = form.devId;
+    paras[@"devType"] = form.devType;
+    paras[@"date"] = form.dateStorage;
+
+    paras[@"averageIntensity"] = @(form.averageIntensity);
+    paras[@"intensities"] = form.intensitiesJSON;
+
+    paras[@"coord"] = form.coord;
+    paras[@"autoAddress"] = form.autoAddress;
+    paras[@"autoLatitude"] = form.autoLatitude;
+    paras[@"autoLongitude"] = form.autoLongitude;
+    paras[@"autoAltitude"] = form.autoAltitude;
+    paras[@"autoHorizontalAccuracy"] = form.autoHorizontalAccuracy;
+    paras[@"autoVerticalAccuracy"] = form.autoVerticalAccuracy;
+
+    paras[@"manualAddress"] = form.manualAddress;
+    paras[@"manualLatitude"] = form.manualLatitude;
+    paras[@"manualLongitude"] = form.manualLongitude;
+
+    paras[@"sfaType"] = form.sfaTypePost;
+    paras[@"noiseType"] = form.noiseTypePost;
+    paras[@"comment"] = form.comment;
+
+    // 发送请求
+    [NCPWebService request:NCPConfigString(@"ServerComplainPage")
+                     paras:paras success:success failure:failure];
+}
+
+// 向服务器检查投诉进度
++ (void)checkComplainProgress:(NSDictionary *)counts
+                      success:(void (^)(NSDictionary *))success
+                      failure:(void (^)(NSString *))failure {
+    // 组织参数
+    NSMutableDictionary *paras = [NSMutableDictionary dictionary];
+
+    NSString *indexesJSON = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:counts
+                                                                                           options:0
+                                                                                             error:nil]
+                                                  encoding:NSUTF8StringEncoding];
+    paras[@"counts"] = indexesJSON;
+
+    // 发送请求
+    [NCPWebService request:NCPConfigString(@"ServerCheckProgressPage")
+                     paras:paras success:success failure:failure];
 }
 
 @end

@@ -17,4 +17,9 @@
                  success:(void (^)(NSDictionary *))success
                  failure:(void (^)(NSString *))failure;
 
+// 向服务器检查投诉进度
++ (void)checkComplainProgress:(NSDictionary *)counts
+                      success:(void (^)(NSDictionary *))success
+                      failure:(void (^)(NSString *))failure;
+
 @end

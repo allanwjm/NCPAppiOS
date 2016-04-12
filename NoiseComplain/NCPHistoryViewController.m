@@ -8,9 +8,10 @@
 
 #import "NCPHistoryViewController.h"
 #import "NCPComplainForm.h"
-#import "NCPSQLiteDAO.h"
+#import "NCPSQLite.h"
 
 #import "LGAlertView.h"
+#import "NCPWebService.h"
 
 #pragma mark - 常量定义
 
@@ -41,6 +42,11 @@ static NSString *const kNCPSegueIdToProcess = @"ComplainGuideToProcess";
 // 选择的投诉记录索引
 @property(nonatomic) NSUInteger historyIndex;
 
+// 检查进度有更新标识位
+@property(nonatomic) BOOL checkProgressUpdate;
+// 检查进度更新失败标识位
+@property(nonatomic) BOOL checkProgressFailed;
+
 @end
 
 @implementation NCPHistoryViewController
@@ -58,13 +64,18 @@ static NSString *const kNCPSegueIdToProcess = @"ComplainGuideToProcess";
     // 检查历史投诉
     [self reloadHistoryData];
     [self.tableView reloadData];
+
+    // 检查受理进度是否有更新
+    self.checkProgressFailed = NO;
+    self.checkProgressUpdate = NO;
+    [self checkProgress];
 }
 
 #pragma mark - 表格数据源
 
 // 重新载入投诉记录数据
 - (void)reloadHistoryData {
-    self.historyArray = [NCPSQLiteDAO selectAllComplainForm];
+    self.historyArray = [NCPSQLite selectAllComplainForm];
     [self.tableView reloadData];
 }
 
@@ -93,15 +104,22 @@ static NSString *const kNCPSegueIdToProcess = @"ComplainGuideToProcess";
     }
 }
 
-// 表格每Section的标题
+// 表格Section的Header
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    switch (section) {
-        case 0:
-            return nil;
-        case 1:
+    if (section == 1) {
+        if (self.checkProgressUpdate) {
+            return @"投诉记录列表 - 有新消息";
+        } else {
             return @"投诉记录列表";
-        default:
-            break;
+        }
+    }
+    return nil;
+}
+
+// 表格Section的Footer
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    if (section == 1 && self.checkProgressFailed) {
+        return @"无法检查投诉受理进度";
     }
     return nil;
 }
@@ -196,13 +214,48 @@ static NSString *const kNCPSegueIdToProcess = @"ComplainGuideToProcess";
     return UITableViewCellEditingStyleNone;
 }
 
-// 表格被编辑事件
+// 表格被编辑事件(删除)
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [NCPSQLiteDAO deleteComplainForm:self.historyArray[(NSUInteger) indexPath.row]];
+        // 删除相应的记录
+        NCPComplainForm *form = self.historyArray[(NSUInteger) indexPath.row];
+        [NCPSQLite deleteComplainProgressForForm:form];
+        [NCPSQLite deleteComplainForm:form];
+
+        // 刷新界面
         [self reloadHistoryData];
         [self.tableView reloadData];
     }
+}
+
+#pragma mark - 检查进度更新
+
+// 检查进度更新, 并在有更新时更新本地数据库
+- (void)checkProgress {
+    // 统计各表单的进度数
+    NSMutableDictionary *counts = [NSMutableDictionary dictionaryWithCapacity:self.historyArray.count];
+    for (NCPComplainForm *form in self.historyArray) {
+        NSArray *progresses = [NCPSQLite selectAllComplainProgressForForm:form];
+        counts[[NSString stringWithFormat:@"%li", form.formId.longValue]] = @(progresses.count);
+    }
+    [NCPWebService checkComplainProgress:counts
+                                 success:^(NSDictionary *json) {
+                                     if (json[@"update"] && ((NSNumber *) json[@"update"]).integerValue != 0) {
+                                         // 需要更新
+                                         self.checkProgressUpdate = YES;
+
+                                         // 保存新的Progress
+                                         NSArray *progresses = json[@"progresses"];
+                                         for (NCPComplainProgress *progress in progresses) {
+                                             [NCPSQLite insertComplainProgress:progress];
+                                         }
+                                     }
+                                 }
+                                 failure:^(NSString *error) {
+                                     // 检查失败, 显示在Header上
+                                     self.checkProgressFailed = YES;
+                                     [self.tableView reloadData];
+                                 }];
 }
 
 @end
