@@ -30,15 +30,6 @@
 
 #pragma mark - ViewController生命周期
 
-// 视图载入完成
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
-    // 清除Storyboard中View的背景颜色
-    self.meterView.backgroundColor = [UIColor clearColor];
-    self.graphView.backgroundColor = [UIColor clearColor];
-}
-
 // 视图即将出现
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];

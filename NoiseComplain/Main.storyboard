@@ -74,6 +74,7 @@
                                                 </variation>
                                             </label>
                                         </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" secondItem="g2p-cq-t8Z" secondAttribute="height" multiplier="3:2" id="0DZ-qv-fml"/>
                                             <constraint firstItem="05U-Ex-Ezb" firstAttribute="top" secondItem="sMC-hv-aql" secondAttribute="bottom" constant="8" id="Bmc-hK-EmW"/>
@@ -151,6 +152,7 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                             </imageView>
                                         </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstItem="vDB-nH-MpJ" firstAttribute="leading" secondItem="NeB-QJ-IZf" secondAttribute="leading" id="Am5-76-mb8"/>
                                             <constraint firstAttribute="trailing" secondItem="sW0-Ln-Ho5" secondAttribute="trailing" id="EIq-fv-Z0z"/>
@@ -1436,7 +1438,7 @@
                                         </mask>
                                     </variation>
                                 </tableViewCellContentView>
-                                <inset key="separatorInset" minX="150" minY="0.0" maxX="50" maxY="0.0"/>
+                                <inset key="separatorInset" minX="10000" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <connections>
                                     <outlet property="imageProgress" destination="Atb-SE-B1N" id="0jT-Vz-Oq1"/>
                                     <outlet property="labelComment" destination="WII-NZ-DN5" id="TDp-Tb-Uez"/>

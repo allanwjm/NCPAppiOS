@@ -87,8 +87,9 @@ static double min() {
     return (([self.audioRecorder peakPowerForChannel:0] + 160) * (max() - min()) / 160) + min();
 }
 
-#pragma mark - 开启与停止
+#pragma mark - 开始与结束
 
+// 开始
 - (void)start {
     // 初始化录音器
     [self initAVAudioRecorder];
@@ -123,7 +124,7 @@ static double min() {
     _isRecording = YES;
 }
 
-
+// 结束
 - (void)stop {
 
     // 释放录音器

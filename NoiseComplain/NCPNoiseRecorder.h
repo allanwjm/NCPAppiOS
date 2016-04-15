@@ -9,27 +9,27 @@
 #import <Foundation/Foundation.h>
 
 /**
- * 噪声录音机类, 封装系统接口用于获取环境声音强度
+ * 噪声检测仪类, 封装系统接口用于获取环境声音强度
  */
 @interface NCPNoiseRecorder : NSObject
 
 @property(nonatomic, readonly) BOOL isRecording;
 
-// 开始录音
+// 开始检测
 - (void)start;
 
-// 结束录音
+// 结束检测
 - (void)stop;
 
-// 开始录音, 一段时间后, 结束录音并调用timeupHandler块
+// 开始检测, 一段时间后, 结束并调用timeupHandler块
 - (void)startWithDuration:(NSTimeInterval)duration
             timeupHandler:(void (^)(double current, double peak))handler;
 
-// 开始录音, 并定期调用tickHandler块
+// 开始检测, 并定期调用tickHandler块
 - (void)startWithTick:(NSTimeInterval)tick
           tickHandler:(void (^)(double current, double peak))handler;
 
-// 开始录音, 定期调用tickHandler块, 一段时间后, 结束录音并调用timeupHandler块
+// 开始检测, 定期调用tickHandler块, 一段时间后, 结束并调用timeupHandler块
 - (void)startWithDuration:(NSTimeInterval)duration
             timeupHandler:(void (^)(double current, double peak))timeupHandler
                      tick:(NSTimeInterval)tick

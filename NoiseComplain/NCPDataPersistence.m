@@ -6,15 +6,13 @@
 //  Copyright © 2016 sysu. All rights reserved.
 //
 
-#import "NCPSQLite.h"
+#import "NCPDataPersistence.h"
 #import "NCPComplainForm.h"
 
 #import "FMDB.h"
 #import "NCPComplainProgress.h"
 
-typedef BOOL b;
-
-@implementation NCPSQLite
+@implementation NCPDataPersistence
 
 // 获取(已经开启的)FMDB数据库对象
 + (FMDatabase *)database {
@@ -44,13 +42,13 @@ typedef BOOL b;
 // 插入投诉表单
 + (BOOL)insertComplainForm:(NCPComplainForm *)form {
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLite database];
+    FMDatabase *db = [NCPDataPersistence database];
     if (!db) {
         return false;
     }
 
     // 检查表是否存在, 若不存在则创建
-    if (![NCPSQLite database:db containsTable:@"complain_form"]) {
+    if (![NCPDataPersistence database:db containsTable:@"complain_form"]) {
         // 创建新表
         [db executeUpdate:@"CREATE TABLE complain_form ("
                 "form_id INTEGER PRIMARY KEY,"
@@ -113,14 +111,14 @@ typedef BOOL b;
     NSMutableArray *array = [NSMutableArray array];
 
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLite database];
+    FMDatabase *db = [NCPDataPersistence database];
     if (!db) {
         // 返回空数组
         return array;
     }
 
     // 检查表格是否存在
-    if (![NCPSQLite database:db containsTable:@"complain_form"]) {
+    if (![NCPDataPersistence database:db containsTable:@"complain_form"]) {
         // 返回空数组
         return array;
     }
@@ -162,7 +160,7 @@ typedef BOOL b;
 // 删除投诉表单
 + (BOOL)deleteComplainForm:(NCPComplainForm *)form {
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLite database];
+    FMDatabase *db = [NCPDataPersistence database];
     if (!db) {
         // 返回空数组
         return NO;
@@ -179,13 +177,13 @@ typedef BOOL b;
 // 插入处理记录
 + (BOOL)insertComplainProgress:(NCPComplainProgress *)progress {
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLite database];
+    FMDatabase *db = [NCPDataPersistence database];
     if (!db) {
         return false;
     }
 
     // 检查表是否存在, 若不存在则创建
-    if (![NCPSQLite database:db containsTable:@"complain_progress"]) {
+    if (![NCPDataPersistence database:db containsTable:@"complain_progress"]) {
         // 创建新表
         [db executeUpdate:@"CREATE TABLE complain_progress ("
                 "progress_id INTEGER PRIMARY KEY,"
@@ -199,7 +197,7 @@ typedef BOOL b;
     }
 
     // 插入新投诉表单
-    b result = [db executeUpdate:@"INSERT INTO complain_progress ("
+    BOOL result = [db executeUpdate:@"INSERT INTO complain_progress ("
                                          "progress_id,"
                                          "form_id,"
                                          "date,"
@@ -228,14 +226,14 @@ typedef BOOL b;
     NSMutableArray *array = [NSMutableArray array];
 
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLite database];
+    FMDatabase *db = [NCPDataPersistence database];
     if (!db) {
         // 返回空数组
         return array;
     }
 
     // 检查表格是否存在
-    if (![NCPSQLite database:db containsTable:@"complain_progress"]) {
+    if (![NCPDataPersistence database:db containsTable:@"complain_progress"]) {
         // 返回空数组
         return array;
     }
@@ -265,7 +263,7 @@ typedef BOOL b;
 
 // 查询某个表单的最新处理记录
 + (NCPComplainProgress *)selectLatestComplainProgressForForm:(NCPComplainForm *)form {
-    NSArray *array = [NCPSQLite selectAllComplainProgressForForm:form];
+    NSArray *array = [NCPDataPersistence selectAllComplainProgressForForm:form];
     if (array.count > 0) {
         return array.lastObject;
     } else {
@@ -276,7 +274,7 @@ typedef BOOL b;
 // 删除某个表单的所有处理记录
 + (BOOL)deleteComplainProgressForForm:(NCPComplainForm *)form {
     // 获取数据库对象
-    FMDatabase *db = [NCPSQLite database];
+    FMDatabase *db = [NCPDataPersistence database];
     if (!db) {
         // 返回空数组
         return NO;

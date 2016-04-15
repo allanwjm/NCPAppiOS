@@ -10,7 +10,7 @@
 #import "NCPComplainForm.h"
 #import "NCPComplainProgress.h"
 #import "NCPProgressTableCell.h"
-#import "NCPSQLite.h"
+#import "NCPDataPersistence.h"
 
 #pragma mark - 常量定义
 
@@ -42,8 +42,8 @@ static NSString *const kNCPCellIdProgress = @"progressCell";
     [super viewDidLoad];
 
     // 从SQLite中载入进度数组
-    self.progresses = [NCPSQLite selectAllComplainProgressForForm:self.form];
-    self.latestProgress = [NCPSQLite selectLatestComplainProgressForForm:self.form];
+    self.progresses = [NCPDataPersistence selectAllComplainProgressForForm:self.form];
+    self.latestProgress = [NCPDataPersistence selectLatestComplainProgressForForm:self.form];
 }
 
 #pragma mark - 表视图点击事件

@@ -9,7 +9,7 @@
 #import "NCPPostViewController.h"
 #import "NCPComplainForm.h"
 #import "NCPNoiseRecorder.h"
-#import "NCPSQLite.h"
+#import "NCPDataPersistence.h"
 #import "NCPWebService.h"
 #import "NCPComplainProgress.h"
 
@@ -485,12 +485,12 @@ static NSString *const kNCPSegueIdToLocation = @"ComplainFormToLocation";
                                 self.form.formId = @(formId);
 
                                 //将投诉表单保存于本地
-                                [NCPSQLite insertComplainForm:self.form];
+                                [NCPDataPersistence insertComplainForm:self.form];
 
                                 // 生成初始提交Progress
                                 NCPComplainProgress *progress = [NCPComplainProgress progressWithJSON:progressJSON];
                                 // 保存初始提交Progress
-                                [NCPSQLite insertComplainProgress:progress];
+                                [NCPDataPersistence insertComplainProgress:progress];
 
                                 // 请求成功提示
                                 [self showSuccessAlert:sendAlert];

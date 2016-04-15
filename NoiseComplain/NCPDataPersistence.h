@@ -1,5 +1,5 @@
 //
-//  NCPSQLiteDAO.h
+//  NCPDataPersistence.h
 //  NoiseComplain
 //
 //  Created by mura on 3/26/16.
@@ -11,7 +11,7 @@
 @class NCPComplainForm;
 @class NCPComplainProgress;
 
-@interface NCPSQLite : NSObject
+@interface NCPDataPersistence : NSObject
 
 #pragma mark - ComplainForm操作
 

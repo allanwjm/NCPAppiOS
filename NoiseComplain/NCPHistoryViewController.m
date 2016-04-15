@@ -8,7 +8,8 @@
 
 #import "NCPHistoryViewController.h"
 #import "NCPComplainForm.h"
-#import "NCPSQLite.h"
+#import "NCPComplainProgress.h"
+#import "NCPDataPersistence.h"
 
 #import "LGAlertView.h"
 #import "NCPWebService.h"
@@ -75,7 +76,7 @@ static NSString *const kNCPSegueIdToProcess = @"ComplainGuideToProcess";
 
 // 重新载入投诉记录数据
 - (void)reloadHistoryData {
-    self.historyArray = [NCPSQLite selectAllComplainForm];
+    self.historyArray = [NCPDataPersistence selectAllComplainForm];
     [self.tableView reloadData];
 }
 
@@ -219,8 +220,8 @@ static NSString *const kNCPSegueIdToProcess = @"ComplainGuideToProcess";
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // 删除相应的记录
         NCPComplainForm *form = self.historyArray[(NSUInteger) indexPath.row];
-        [NCPSQLite deleteComplainProgressForForm:form];
-        [NCPSQLite deleteComplainForm:form];
+        [NCPDataPersistence deleteComplainProgressForForm:form];
+        [NCPDataPersistence deleteComplainForm:form];
 
         // 刷新界面
         [self reloadHistoryData];
@@ -235,7 +236,7 @@ static NSString *const kNCPSegueIdToProcess = @"ComplainGuideToProcess";
     // 统计各表单的进度数
     NSMutableDictionary *counts = [NSMutableDictionary dictionaryWithCapacity:self.historyArray.count];
     for (NCPComplainForm *form in self.historyArray) {
-        NSArray *progresses = [NCPSQLite selectAllComplainProgressForForm:form];
+        NSArray *progresses = [NCPDataPersistence selectAllComplainProgressForForm:form];
         counts[[NSString stringWithFormat:@"%li", form.formId.longValue]] = @(progresses.count);
     }
     [NCPWebService checkComplainProgress:counts
@@ -246,8 +247,9 @@ static NSString *const kNCPSegueIdToProcess = @"ComplainGuideToProcess";
 
                                          // 保存新的Progress
                                          NSArray *progresses = json[@"progresses"];
-                                         for (NCPComplainProgress *progress in progresses) {
-                                             [NCPSQLite insertComplainProgress:progress];
+                                         for (NSDictionary *dict in progresses) {
+                                             NCPComplainProgress *progress = [NCPComplainProgress progressWithJSON:dict];
+                                             [NCPDataPersistence insertComplainProgress:progress];
                                          }
                                      }
                                  }

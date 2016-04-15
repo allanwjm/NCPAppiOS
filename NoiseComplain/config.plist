@@ -21,7 +21,7 @@
 	<key>SQLiteFile</key>
 	<string>ncp.sqlite</string>
 	<key>ServerHost</key>
-	<string>http://localhost:8080</string>
+	<string>http://222.200.176.92:58080/ncpserver</string>
 	<key>ServerErrorMessageKey</key>
 	<string>error</string>
 	<key>ServerComplainPage</key>
@@ -31,7 +31,7 @@
 	<key>DeviceTypePList</key>
 	<string>DevType</string>
 	<key>MeterVCRefreshPerSecond</key>
-	<integer>45</integer>
+	<integer>30</integer>
 	<key>MeterVCRefreshLabelPerSecond</key>
 	<integer>2</integer>
 	<key>MeterViewMaxValue</key>
